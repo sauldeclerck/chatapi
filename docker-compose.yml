@@ -1,0 +1,26 @@
+version: "3.3"
+services:
+  chat:
+    build: ./chatAPI
+    depends_on: 
+      - db
+  auth:
+    build: ./authAPI
+  frontend:
+    image: public.ecr.aws/i9i5l3g4/nginx:1.22
+    volumes:
+      - ./frontend:/var/www/static:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '80:80'
+    depends_on:
+      - chat
+      - auth
+  db:
+    image: mysql:8.0.29-debian
+    environment:
+      - STORAGE=MYSQL
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=this
